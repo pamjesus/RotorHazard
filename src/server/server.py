@@ -41,7 +41,6 @@ from RHRace import get_race_state
 
 APP = Flask(__name__, static_url_path='/static')
 APP.config['SECRET_KEY'] = 'secret!'
-SOCKET_IO = SocketIO(APP, async_mode='gevent')
 
 HEARTBEAT_THREAD = None
 
@@ -91,6 +90,7 @@ Config['GENERAL']['ADMIN_PASSWORD'] = 'rotorhazard'
 Config['GENERAL']['SLAVES'] = []
 Config['GENERAL']['SLAVE_TIMEOUT'] = 300 # seconds
 Config['GENERAL']['DEBUG'] = False
+Config['GENERAL']['CORS_ALLOWED_HOSTS'] = '*'
 
 Config['GENERAL']['NODE_DRIFT_CALC_TIME'] = 10
 
@@ -110,6 +110,8 @@ except ValueError:
     Config['GENERAL']['configFile'] = -1
     print 'Configuration file invalid, using defaults'
 
+# start SocketIO service
+SOCKET_IO = SocketIO(APP, async_mode='gevent', cors_allowed_origins=Config['GENERAL']['CORS_ALLOWED_HOSTS'])
 
 try:
     interfaceModule = importlib.import_module('RHInterface')
@@ -674,9 +676,23 @@ def theaterChaseRainbow(strip, wait_ms=25):
                     strip.setPixelColor(i+q, 0)
 
 # Create LED object with appropriate configuration.
+Pixel = None
+
 try:
     pixelModule = importlib.import_module('rpi_ws281x')
     Pixel = getattr(pixelModule, 'Adafruit_NeoPixel')
+    print 'LED: selecting library "rpi_ws2812x"'
+except ImportError:
+    pass
+
+try:
+    pixelModule = importlib.import_module('neopixel')
+    Pixel = getattr(pixelModule, 'Adafruit_NeoPixel')
+    print 'LED: selecting library "neopixel" (older)'
+except ImportError:
+    pass
+
+if Pixel != None:
     Color = getattr(pixelModule, 'Color')
     led_strip_config = Config['LED']['LED_STRIP']
     if led_strip_config == 'RGB':
@@ -695,15 +711,14 @@ try:
         print 'LED: disabled (Invalid LED_STRIP value: {0})'.format(led_strip_config)
         Pixel = None
     print 'LED: hardware GPIO enabled'
-except ImportError:
+else:
     try:
         pixelModule = importlib.import_module('ANSIPixel')
         Pixel = getattr(pixelModule, 'ANSIPixel')
         Color = getattr(pixelModule, 'Color')
         led_strip = None
-        print 'LED: locally enabled via ANSIPixel'
+        print 'LED: simulated via ANSIPixel (no physical LED support enabled)'
     except ImportError:
-        Pixel = None
         print 'LED: disabled (no modules available)'
 
 if isLedEnabled():
