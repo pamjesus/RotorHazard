@@ -21,7 +21,7 @@ template<typename T, size_t S, typename IT = typename Helper::Index<(S <= UINT8_
 private:
     const T *const buffer;
 public:
-    ArrayList(T arr[]) : buffer(arr) {
+    ArrayList(const T arr[]) : buffer(arr) {
 
     }
     T inline operator [](IT index) const {
@@ -37,7 +37,7 @@ private:
     const List<T,S,IT>& buffer;
     const IT start, end;
 public:
-    SlicedList(List<T,S,IT>& l, IT start, IT end) : buffer(l), start(start), end(end) {
+    SlicedList(const List<T,S,IT>& l, IT start, IT end) : buffer(l), start(start), end(end) {
 
     }
     T inline operator [](IT index) const {
@@ -45,6 +45,22 @@ public:
     }
     IT inline size() const {
         return end - start;
+    }
+};
+
+template<typename T, size_t S1, size_t S2, typename IT = typename Helper::Index<(S1+S2 <= UINT8_MAX), (S1+S2 <= UINT16_MAX)>::Type> class CompoundList : public List<T,S1+S2,IT> {
+private:
+    const List<T,S1,IT>& l1;
+    const List<T,S2,IT>& l2;
+public:
+    CompoundList(const List<T,S1,IT>& l1, const List<T,S2,IT>& l2) : l1(l1), l2(l2) {
+
+    }
+    T inline operator [](IT index) const {
+        return (index < l1.size()) ? l1[index] : l2[index-l1.size()];
+    }
+    IT inline size() const {
+        return l1.size() + l2.size();
     }
 };
 

@@ -97,7 +97,6 @@ void loop()
         // update settings and status LED
 
         RssiNode& rssiNode = RssiReceivers::rssiRxs->getRssiNode(cmdRssiNodeIndex);
-        State& state = rssiNode.getState();
         Settings& settings = rssiNode.getSettings();
         RxModule& rx = RssiReceivers::rssiRxs->getRxModule(cmdRssiNodeIndex);
 
@@ -109,9 +108,9 @@ void loop()
 
         // allow READ_LAP_STATS command to activate operations
         //  so they will resume after node or I2C bus reset
-        if (!state.activatedFlag && (currentStatusFlags & LAPSTATS_READ))
+        if (!rssiNode.active && (currentStatusFlags & LAPSTATS_READ))
         {
-            state.activatedFlag = true;
+            rssiNode.active = true;
         }
 
         // update settings
@@ -129,7 +128,7 @@ void loop()
                 {
                     currentStatusFlags &= ~FREQ_SET;
                 }
-                state.activatedFlag = false;
+                rssiNode.active = false;
             }
             else
             {
@@ -141,7 +140,7 @@ void loop()
                 {
                     currentStatusFlags &= ~FREQ_SET;
                 }
-                state.activatedFlag = true;
+                rssiNode.active = true;
             }
 
             if (currentStatusFlags & FREQ_CHANGED)
