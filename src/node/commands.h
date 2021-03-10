@@ -18,6 +18,8 @@ private:
     Hardware *const hardware;
     void handleReadLapPassStats(RssiNode& rssiNode, mtime_t timeNowVal);
     void handleReadLapExtremums(RssiNode& rssiNode, mtime_t timeNowVal);
+    void handleReadRssiHistory(RssiNode& rssiNode);
+    void setMode(RssiNode& rssiNode, uint8_t mode);
 public:
     Message(RssiReceivers *rssiRxs, Hardware *hardware) : rssiRxs(rssiRxs), hardware(hardware) {
     }
@@ -43,6 +45,7 @@ void handleStreamEvent(Stream& stream, Message& msg);
 #define READ_REVISION_CODE 0x22   // read NODE_API_LEVEL and verification value
 #define READ_NODE_RSSI_PEAK 0x23  // read 'state.nodeRssiPeak' value
 #define READ_NODE_RSSI_NADIR 0x24  // read 'state.nodeRssiNadir' value
+#define READ_NODE_RSSI_HISTORY 0x25
 #define READ_ENTER_AT_LEVEL 0x31
 #define READ_EXIT_AT_LEVEL 0x32
 #define READ_TIME_MILLIS 0x33     // read current 'millis()' value
@@ -53,6 +56,7 @@ void handleStreamEvent(Stream& stream, Message& msg);
 #define WRITE_FREQUENCY 0x51
 #define WRITE_ENTER_AT_LEVEL 0x71
 #define WRITE_EXIT_AT_LEVEL 0x72
+#define WRITE_MODE 0x73
 #define WRITE_CURNODE_INDEX 0x7A   // write index of current node for this processor
 
 #define FORCE_END_CROSSING 0x78  // kill current crossing flag regardless of RSSI value
@@ -69,6 +73,10 @@ void handleStreamEvent(Stream& stream, Message& msg);
 
 #define LAPSTATS_FLAG_CROSSING 0x01  // crossing is in progress
 #define LAPSTATS_FLAG_PEAK 0x02      // reported extremum is peak
+
+#define MODE_TIMER 0
+#define MODE_SCANNER 1
+#define MODE_RAW 2
 
 extern uint8_t cmdStatusFlags;
 extern uint8_t cmdRssiNodeIndex;
