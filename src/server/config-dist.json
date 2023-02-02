@@ -4,8 +4,13 @@
 		"ADMIN_USERNAME": "admin",
 		"ADMIN_PASSWORD": "rotorhazard",
 		"DEBUG": false,
-		"CORS_ALLOWED_HOSTS": "*"
-	},
+		"CORS_ALLOWED_HOSTS": "*",
+        	"OBS_DISABLED": {
+                                "HOST":"192.168.OBS_IP",
+                                "PORT":4444,
+                                "PASSWORD":"yourPpass"
+               	                }
+		 },
 	"HARDWARE": {
 		"I2C_BUS": 1
 	},
