@@ -21,9 +21,7 @@ def do_ObsInitialize_fn(args):
     global obs
     logger.info("def do_ObsInitialize_fn(()" )
     obs = NoOBSManager()
-    if not 'OBS' in Config.GENERAL:
-        return
-    if 'HOST' in Config.GENERAL['OBS'] and 'PORT' in Config.GENERAL['OBS'] and 'PASSWORD' in Config.GENERAL['OBS']:
+    if 'OBS' in Config.GENERAL and 'HOST' in Config.GENERAL['OBS'] and 'PORT' in Config.GENERAL['OBS'] and 'PASSWORD' in Config.GENERAL['OBS']:
         try:
             obsModule = importlib.import_module('obsws_python')
             obs = OBSManager(config=Config.GENERAL['OBS'], obsModule=obsModule)
@@ -33,14 +31,14 @@ def do_ObsInitialize_fn(args):
 
 def do_race_start(args):
     global obs
-    logger.info("def do_race_start()" )
+    logger.info("def do_race_start()")
     if not obs.start():
         pass
         #emit_priority_message("OBS: Start Recording Failed", True)     #TODO
 
 def do_race_stop(args):
     global obs
-    logger.info("def do_race_stop")
+    logger.info("def do_race_stop()")
     if not obs.stop():
         pass
         #emit_priority_message("OBS: Stop Recording Failed", True)       #TODO
@@ -51,8 +49,8 @@ def do_race_event(args):
 def initialize(**kwargs):
     if 'Events' in kwargs:
         kwargs['Events'].on(Evt.STARTUP, 'ObsInitialize', do_ObsInitialize_fn, {}, 90 )
-        kwargs['Events'].on(Evt.RACE_START, 'ObsRaceStart', do_race_start, {}, 91 ) # Bloquer / Non bloquer ?
-        kwargs['Events'].on(Evt.RACE_STOP, 'ObsRaceStop', do_race_stop, {}, 101 )   # Bloquer / Non bloquer ?
+        kwargs['Events'].on(Evt.RACE_START, 'ObsRaceStart', do_race_start, {}, 101 ) # Bloquer / Non bloquer ?
+        kwargs['Events'].on(Evt.RACE_STOP, 'ObsRaceStop', do_race_stop, {}, 102 )   # Bloquer / Non bloquer ?
 
         kwargs['Events'].on(Evt.RACE_STAGE, 'ObsRace_schedule_stage', do_race_event, {'event': 'RACE_STAGE'}, 101 )
         kwargs['Events'].on(Evt.RACE_FINISH, 'ObsRaceFinish', do_race_event, {'event': 'RACE_FINISH'}, 101 )
