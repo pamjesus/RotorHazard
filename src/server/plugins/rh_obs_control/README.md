@@ -1,9 +1,9 @@
-# OBS_Websocks
+## OBS_Websocks
  OBS websocks plugin for Rotorhazard to allow control recording at start and stop of the race.
 
-# TODO
-  Adapt to Live model. i.e. Changing scenes based on rotorhazard timer events.
-  Adapt to start record before race start.
+### TODO
+  * Adapt to Live model. i.e. Changing scenes based on rotorhazard timer events.
+  * Adapt to start record before race start.
 
  ### Install
 
