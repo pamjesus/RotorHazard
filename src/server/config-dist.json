@@ -4,12 +4,7 @@
 		"ADMIN_USERNAME": "admin",
 		"ADMIN_PASSWORD": "rotorhazard",
 		"DEBUG": false,
-		"CORS_ALLOWED_HOSTS": "*",
-        	"OBS_DISABLED": {
-                                "HOST":"192.168.OBS_IP",
-                                "PORT":4444,
-                                "PASSWORD":"yourPpass"
-               	                }
+		"CORS_ALLOWED_HOSTS": "*"
 		 },
 	"HARDWARE": {
 		"I2C_BUS": 1
@@ -34,5 +29,11 @@
 		"FILELOG_LEVEL": "INFO",
 		"FILELOG_NUM_KEEP": 30,
 		"CONSOLE_STREAM": "stdout"
+	},
+	"OBS_WS": {
+		"ENABLED": false,
+		"HOST": "127.0.0.1",
+		"PORT": 4444,
+		"PASSWORD": "YourPassword"
 	}
 }

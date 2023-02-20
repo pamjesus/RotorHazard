@@ -13,7 +13,7 @@ import importlib
 
 obs = {}
 SOCKET_IO = None
-MODULE = 'OBS_PLUGIN'
+MODULE = 'OBS_WS'
 
 class NoOBSManager():
     def __init__(self):
