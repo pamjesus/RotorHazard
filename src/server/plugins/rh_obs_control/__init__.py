@@ -8,35 +8,104 @@ import logging
 logger = logging.getLogger(__name__)
 import Config
 from eventmanager import Evt
-from plugins.rh_obs_control.obs_manager import NoOBSManager, OBSManager
 import importlib
+
 
 obs = {}
 SOCKET_IO = None
+MODULE = 'OBS_PLUGIN'
+
+class NoOBSManager():
+    def __init__(self):
+        pass
+
+    def isEnabled(self):
+        return False
+
+    def start(self):
+        return True
+
+    def stop(self):
+        return True
+
+class OBSManager():
+    rc = None
+    obsModule = None
+    config = {} 
+    
+    def __init__(self, config, obsModule):
+        self.config=config
+        self.obsModule = obsModule
+        self.connect()
+        
+    def connect(self):
+        try:        
+            logger.info("OBS: (Re)connecting...")
+            self.rc = self.obsModule.ReqClient(host=self.config['HOST'], port=self.config['PORT'], password=self.config['PASSWORD'])        
+        except:
+            logger.error("OBS: Error connecting to configured instance")
 
 
-def emite_priority_message(message):
+    def isEnabled(self):
+        return True
+
+    def start(self):
+        try:
+            self.rc.start_record()
+            logger.info("OBS: Recording Started")
+        except:
+            self.connect()          
+            try:
+                self.rc.start_record()
+                logger.info("OBS: Recording Started")
+            except:
+                logger.error("OBS: Start Recording Failed")
+                return False    
+        return True
+
+    def stop(self):
+        try:
+            self.rc.stop_record()
+            logger.info("OBS: Recording Stoppped")
+        except:
+            self.connect()          
+            try:
+                self.rc.stop_record()
+                logger.info("OBS: Recording Stoppped")
+            except:
+                logger.error("OBS: Stop Recording Failed")
+                return False
+        return True
+
+
+def emite_priority_message(message, interrupt = False):
     ''' Emits message to clients '''
     emit_payload = {
         'message': message,
-        'interrupt': False
+        'interrupt': interrupt
     }
     SOCKET_IO.emit('priority_message', emit_payload)
 
 
 def do_ObsInitialize_fn(args):
     ''' Initialize OBS connection '''
-    logger.info("def do_ObsInitialize_fn(()" )
+    logger.info("def do_ObsInitialize_fn" )
     global obs
     obs = NoOBSManager()
-    if 'OBS' in Config.GENERAL and 'HOST' in Config.GENERAL['OBS'] and 'PORT' in Config.GENERAL['OBS'] and 'PASSWORD' in Config.GENERAL['OBS']:
+    if MODULE in Config.ExternalConfig                            \
+            and 'HOST' in Config.ExternalConfig  [MODULE]         \
+            and 'PORT' in Config.ExternalConfig  [MODULE]         \
+            and 'PASSWORD' in Config.ExternalConfig  [MODULE]     \
+            and 'ENABLED' in Config.ExternalConfig  [MODULE]      \
+            and Config.ExternalConfig  [MODULE]['ENABLED'] == True:
         try:
             obsModule = importlib.import_module('obsws_python')
-            obs = OBSManager(config=Config.GENERAL['OBS'], obsModule=obsModule)
+            obs = OBSManager(config=Config.ExternalConfig  [MODULE], obsModule=obsModule)
         except ImportError:
             logger.error("OBS: Error importing obsws_python, please pip install this library manually")
             obs = NoOBSManager()
-
+            emite_priority_message('Error conneting OBS server', True)
+    logger.info("def do_ObsInitialize_fn DONE" )
 
 def do_race_start(args):
     logger.info("def do_race_start()")
@@ -54,6 +123,6 @@ def initialize(**kwargs):
     global SOCKET_IO
     SOCKET_IO = kwargs['SOCKET_IO']
     if 'Events' in kwargs:
-        kwargs['Events'].on(Evt.STARTUP, 'ObsInitialize', do_ObsInitialize_fn, {}, 90 )
-        kwargs['Events'].on(Evt.RACE_START, 'ObsRaceStart', do_race_start, {}, 101 ) # Bloquer / Non bloquer ?
-        kwargs['Events'].on(Evt.RACE_STOP, 'ObsRaceStop', do_race_stop, {}, 102 )   # Bloquer / Non bloquer ?
+        kwargs['Events'].on(Evt.STARTUP, 'ObsInitialize', do_ObsInitialize_fn, {}, 103 ) # Non block
+        kwargs['Events'].on(Evt.RACE_START, 'ObsRaceStart', do_race_start, {}, 101 ) # Non block
+        kwargs['Events'].on(Evt.RACE_STOP, 'ObsRaceStop', do_race_stop, {}, 102 )   # Non block
