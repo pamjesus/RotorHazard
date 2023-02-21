@@ -8,12 +8,14 @@ import logging
 logger = logging.getLogger(__name__)
 import Config
 from eventmanager import Evt
+from monotonic import monotonic
 import importlib
-
+import gevent.monkey
 
 obs = {}
 SOCKET_IO = None
 MODULE = 'OBS_WS'
+time_before_start_ms = 0
 
 class NoOBSManager():
     def __init__(self):
@@ -90,21 +92,24 @@ def emite_priority_message(message, interrupt = False):
 def do_ObsInitialize_fn(args):
     ''' Initialize OBS connection '''
     logger.info("def do_ObsInitialize_fn" )
-    global obs
+    global obs, time_before_start_ms
     obs = NoOBSManager()
-    if MODULE in Config.ExternalConfig                            \
-            and 'HOST' in Config.ExternalConfig  [MODULE]         \
+    if MODULE in Config.ExternalConfig:
+        if      'HOST' in Config.ExternalConfig  [MODULE]         \
             and 'PORT' in Config.ExternalConfig  [MODULE]         \
             and 'PASSWORD' in Config.ExternalConfig  [MODULE]     \
             and 'ENABLED' in Config.ExternalConfig  [MODULE]      \
-            and Config.ExternalConfig  [MODULE]['ENABLED'] == True:
-        try:
-            obsModule = importlib.import_module('obsws_python')
-            obs = OBSManager(config=Config.ExternalConfig  [MODULE], obsModule=obsModule)
-        except ImportError:
-            logger.error("OBS: Error importing obsws_python, please pip install this library manually")
-            obs = NoOBSManager()
-            emite_priority_message('Error conneting OBS server', True)
+            and Config.ExternalConfig [MODULE]['ENABLED'] == True:
+            try:
+                obsModule = importlib.import_module('obsws_python')
+                obs = OBSManager(config=Config.ExternalConfig  [MODULE], obsModule=obsModule)
+            except ImportError:
+                logger.error("OBS: Error importing obsws_python, please pip install this library manually")
+                obs = NoOBSManager()
+                emite_priority_message('Error conneting OBS server', True)
+        if 'PRE_START' in Config.ExternalConfig [MODULE]:
+            time_before_start_ms = Config.ExternalConfig [MODULE]['PRE_START'] 
+
     logger.info("def do_ObsInitialize_fn DONE" )
 
 def do_race_start(args):
@@ -119,10 +124,19 @@ def do_race_stop(args):
         emite_priority_message("OBS: Stop Recording Failed")
 
 
+def do_race_stage(args):
+    logger.info("def do_race_stage")
+    #wait to before start
+    while (monotonic() < args['pi_starts_at_s'] - (time_before_start_ms/1000)):
+        gevent.sleep(0.1)
+    do_race_start(args)
+
+
 def initialize(**kwargs):
     global SOCKET_IO
     SOCKET_IO = kwargs['SOCKET_IO']
     if 'Events' in kwargs:
         kwargs['Events'].on(Evt.STARTUP, 'ObsInitialize', do_ObsInitialize_fn, {}, 103 ) # Non block
-        kwargs['Events'].on(Evt.RACE_START, 'ObsRaceStart', do_race_start, {}, 101 ) # Non block
+        #kwargs['Events'].on(Evt.RACE_START, 'ObsRaceStart', do_race_start, {}, 101 ) # Non block
         kwargs['Events'].on(Evt.RACE_STOP, 'ObsRaceStop', do_race_stop, {}, 102 )   # Non block
+        kwargs['Events'].on(Evt.RACE_STAGE, 'ObsRaceStage', do_race_stage, {}, 102 )   # Non block
