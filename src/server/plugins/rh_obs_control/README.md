@@ -2,16 +2,16 @@
  OBS websocks plugin for Rotorhazard to allow control recording at start and stop of the race.
 
 ## Features
- * Start/Stop OBS recording at every race.
- * Star recording before race starts (parameter in milliseconds)
- * Restart connection to OBS in case of a failed call to the Webservice
- * When active, a start/stop recording failure raises a high-priority message in the front end.
+* Start/Stop OBS recording at every race. 
+* Star recording before race starts (parameter in milliseconds)
+* Restart connection to OBS in case of a failed call to the Webservice
+* When active, a start/stop recording failure raises a high-priority message in the front end.
  
 
 ### TODO
   * Adapt to Live model. i.e. Changing scenes based on Rotorhazard timer events.
 
- ### Install
+### Install
 
  pip install -r .\requirements.txt
 
