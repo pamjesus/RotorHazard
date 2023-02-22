@@ -15,8 +15,23 @@
 
  pip install -r .\requirements.txt
 
-Add parameters at the bottom of the config.json file. You can use the template at config-dist.json in this plugIn. 
+Add the tree parameter "BS_WS" to the bottom of the config.json file. You can source the template at config-dist.json in this directory.
 
-Set your IP, port, and password. 
+```
+{
+"OBS_WS": {
+	"ENABLED": true,
+	"HOST": "127.0.0.1",
+	"PORT": 4444,
+	"PASSWORD": "YourPassword",
+	"PRE_START": 2000
+  }
+}
+```
+
+
+Set your IP, port, and password.
+
 This plug-in is active where ENABLED is set to true.
+
 The parameter PRE_START is optional, and set's the time to start recording before the race starts. 
