@@ -29,12 +29,5 @@
 		"FILELOG_LEVEL": "INFO",
 		"FILELOG_NUM_KEEP": 30,
 		"CONSOLE_STREAM": "stdout"
-	},
-	"OBS_WS": {
-		"ENABLED": false,
-		"HOST": "127.0.0.1",
-		"PORT": 4444,
-		"PASSWORD": "YourPassword",
-		"PRE_START": 2000
 	}
 }

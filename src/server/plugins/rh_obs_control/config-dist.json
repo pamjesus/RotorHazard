@@ -1,0 +1,9 @@
+{
+	"OBS_WS": {
+		"ENABLED": true,
+		"HOST": "127.0.0.1",
+		"PORT": 4444,
+		"PASSWORD": "YourPassword",
+		"PRE_START": 2000
+	}
+}
