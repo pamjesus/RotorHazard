@@ -32,6 +32,6 @@ Add the tree parameter "BS_WS" to the bottom of the config.json file. You can so
 
 Set your IP, port, and password.
 
-This plug-in is active where ENABLED is set to true.
+This plug-in can be active/inactive by setting the parameter ENABLED accordingly.
 
-The parameter PRE_START is optional, and set's the time to start recording before the race starts. 
+The recording can be activated before the race starts by setting the parameter PRE_START with int value (milliseconds) to the start.
