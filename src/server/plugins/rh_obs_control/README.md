@@ -5,17 +5,14 @@
 * Start/Stop OBS recording at every race. 
 * Star recording before race starts (parameter in milliseconds)
 * Restart connection to OBS in case of a failed call to the Webservice
-* When active, a start/stop recording failure raises a high-priority message in the front end.
+* A start/stop recording failure raises a high-priority message in the front end.
  
 
-### TODO
-  * Adapt to Live model. i.e. Changing scenes based on Rotorhazard timer events.
-
-### Install
+## Install
 
  pip install -r .\requirements.txt
 
-Add the tree parameter "BS_WS" to the bottom of the config.json file. You can source the template at config-dist.json in this directory.
+Add the parameter "BS_WS" to the bottom of the config.json file. You can source the template at config-dist.json in this directory.
 
 ```
 {
@@ -34,4 +31,16 @@ Set your IP, port, and password.
 
 This plug-in can be active/inactive by setting the parameter ENABLED accordingly.
 
-The recording can be activated before the race starts by setting the parameter PRE_START with int value (milliseconds) to the start.
+The recording can be activated before the race starts by setting the parameter PRE_START with int value (milliseconds) to the start. Note, the waiting is done in intervals of 0,1 seconds.
+
+
+### On the OBS app
+
+Goto tools > obs-socket_sething
+
+![Menu](image/obs_01_menu.png)
+
+Then set the server port and the password. 
+
+![Menu](image/Obs_02_sethings.png)
+
