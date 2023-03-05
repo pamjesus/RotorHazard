@@ -38,8 +38,8 @@ The recording can be activated before the race starts by setting the parameter P
 
 Go to tools > obs-socket_sething
 
-<img src="image/obs_01_menu.png" alt="drawing" width="250"/>
+<img src="image/obs_01_menu.png" alt="drawing" width="600"/>
 
 Then set the server port and the password. 
 
-<img src="./image/Obs_02_sethings.png" alt="drawing" width="300"/>
+<img src="./image/Obs_02_sethings.png" alt="drawing" width="600"/>
