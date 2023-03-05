@@ -12,7 +12,7 @@
 
  pip install -r .\requirements.txt
 
-Add the parameter "BS_WS" to the bottom of the config.json file. You can source the template at config-dist.json in this directory.
+Add the config "BS_WS", sample below, to the bottom of the config.json file.
 
 ```
 {
