@@ -88,7 +88,7 @@ def do_ObsInitialize_fn(args):
     logger.info("def do_ObsInitialize_fn" )
     global OBS, time_before_start_ms
     OBS = NoOBSManager()
-    if MODULE_NAME in Config.ExternalConfig:
+    if hasattr(Config, 'ExternalConfig') and MODULE_NAME in Config.ExternalConfig:
         module_conf = Config.ExternalConfig [MODULE_NAME] 
         if      'HOST' in module_conf      \
             and 'PORT' in module_conf      \
