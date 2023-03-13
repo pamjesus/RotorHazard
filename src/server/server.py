@@ -1,5 +1,5 @@
 '''RotorHazard server script'''
-RELEASE_VERSION = "3.2.0" # Public release version code
+RELEASE_VERSION = "3.2.1" # Public release version code
 SERVER_API = 34 # Server API version
 NODE_API_SUPPORTED = 18 # Minimum supported node version
 NODE_API_BEST = 35 # Most recent node API
@@ -2341,9 +2341,6 @@ def do_stop_race_actions(doSave=False):
 
     else:
         logger.debug('No active race to stop')
-        RACE.race_status = RaceStatus.READY # Go back to ready state
-        INTERFACE.set_race_status(RaceStatus.READY)
-        Events.trigger(Evt.LAPS_CLEAR)
         delta_time = 0
 
     # check if nodes may be set to temporary lower EnterAt/ExitAt values (and still have them)
