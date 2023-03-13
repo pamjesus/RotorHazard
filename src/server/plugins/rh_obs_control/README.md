@@ -10,7 +10,9 @@
 
 ## Install
 
- pip install -r .\requirements.txt
+Install dependencies. File available inside the plugin directory.
+
+  pip install -r .\requirements.txt
 
 Add the config "BS_WS", sample below, to the bottom of the config.json file.
 
