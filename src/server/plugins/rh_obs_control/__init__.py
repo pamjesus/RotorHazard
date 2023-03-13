@@ -103,23 +103,23 @@ def do_ObsInitialize_fn(args):
                 emite_priority_message('Error conneting OBS server', True)
         if 'PRE_START' in module_conf:
             time_before_start_ms = module_conf['PRE_START'] 
-    logger.info("def do_ObsInitialize_fn DONE" )
+    logger.info("do_ObsInitialize_fn DONE" )
 
 
 def do_race_start(args):
-    logger.info("def do_race_start()")
+    logger.info("do_race_start")
     if not OBS.start():
         emite_priority_message("OBS: Start Recording Failed")
 
 
 def do_race_stop(args):
-    logger.info("def do_race_stop()")
+    logger.info("do_race_stop")
     if not OBS.stop():
         emite_priority_message("OBS: Stop Recording Failed")
 
 
 def do_race_stage(args):
-    logger.info("def do_race_stage")
+    logger.info("do_race_stage")
     #wait to before start
     while (monotonic() < args['pi_starts_at_s'] - (time_before_start_ms/1000)):
         gevent.sleep(0.1)
