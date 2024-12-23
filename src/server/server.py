@@ -1,5 +1,5 @@
 '''RotorHazard server script'''
-RELEASE_VERSION = "4.2.0-dev.4" # Public release version code
+RELEASE_VERSION = "4.2.0-beta.3" # Public release version code
 SERVER_API = 45 # Server API version
 NODE_API_SUPPORTED = 18 # Minimum supported node version
 NODE_API_BEST = 35 # Most recent node API
@@ -2298,34 +2298,35 @@ def get_pilotrace(data):
     if 'pilotrace_id' in data:
         pilotrace = RaceContext.rhdata.get_savedPilotRace(data['pilotrace_id'])
 
-        laps = []
-        for lap in RaceContext.rhdata.get_savedRaceLaps_by_savedPilotRace(pilotrace.id):
-            laps.append({
-                    'id': lap.id,
-                    'lap_time_stamp': lap.lap_time_stamp,
-                    'lap_time': lap.lap_time,
-                    'lap_time_formatted': lap.lap_time_formatted,
-                    'source': lap.source,
-                    'deleted': lap.deleted
-                })
+        if pilotrace:
+            laps = []
+            for lap in RaceContext.rhdata.get_savedRaceLaps_by_savedPilotRace(pilotrace.id):
+                laps.append({
+                        'id': lap.id,
+                        'lap_time_stamp': lap.lap_time_stamp,
+                        'lap_time': lap.lap_time,
+                        'lap_time_formatted': lap.lap_time_formatted,
+                        'source': lap.source,
+                        'deleted': lap.deleted
+                    })
 
-        pilot_data = RaceContext.rhdata.get_pilot(pilotrace.pilot_id)
-        if pilot_data:
-            nodepilot = pilot_data.callsign
-        else:
-            nodepilot = None
+            pilot_data = RaceContext.rhdata.get_pilot(pilotrace.pilot_id)
+            if pilot_data:
+                nodepilot = pilot_data.callsign
+            else:
+                nodepilot = None
 
-        emit('race_details', {
-            'pilotrace_id': data['pilotrace_id'],
-            'callsign': nodepilot,
-            'pilot_id': pilotrace.pilot_id,
-            'node_index': pilotrace.node_index,
-            'history_values': json.loads(pilotrace.history_values),
-            'history_times': json.loads(pilotrace.history_times),
-            'laps': laps,
-            'enter_at': pilotrace.enter_at,
-            'exit_at': pilotrace.exit_at,
-        })
+            emit('race_details', {
+                'pilotrace_id': data['pilotrace_id'],
+                'callsign': nodepilot,
+                'pilot_id': pilotrace.pilot_id,
+                'node_index': pilotrace.node_index,
+                'history_values': json.loads(pilotrace.history_values),
+                'history_times': json.loads(pilotrace.history_times),
+                'laps': laps,
+                'enter_at': pilotrace.enter_at,
+                'exit_at': pilotrace.exit_at,
+            })
 
 @SOCKET_IO.on('check_bpillfw_file')
 @catchLogExceptionsWrapper

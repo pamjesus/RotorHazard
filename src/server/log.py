@@ -399,18 +399,21 @@ def emit_current_log_file_to_socket(log_path_name, SOCKET_IO):
                 line_list = []  # filter lines so only log levels >= 'socket_min_log_level' are included
                 with io.open(log_path_name, 'r') as f:
                     min_lvl_flag = False
+                    pos1 = 0
                     for line_str in f:
                         if len(line_str) > 24:
                             pos1 = line_str.find('[', 24)
                         if pos1 > 0:
-                            pos2 = line_str.find(']', pos1)
+                            pos2 = line_str.find(']', pos1) if line_str[0:4].isnumeric() else 0
                             if pos2 > pos1:
                                 lvl_num = get_logging_level_value(line_str[pos1+1 : pos2])
                                 if lvl_num >= socket_min_log_level:
                                     min_lvl_flag = True
                                     line_list.append(line_str)
-                                else:
+                                elif lvl_num >= 0:
                                     min_lvl_flag = False
+                                elif min_lvl_flag:
+                                    line_list.append(line_str)
                             elif min_lvl_flag:
                                 line_list.append(line_str)  # if line does not contain "[log-level]" and
                         elif min_lvl_flag:                  #  previous line did then include this one
